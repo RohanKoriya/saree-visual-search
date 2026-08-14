@@ -4,11 +4,14 @@ __pycache__/
 .pytest_cache/
 .cache/
 
-# Downloaded catalog images and built index are large / regeneratable via
+# Downloaded catalog images are large and regeneratable via
 # scripts/build_index.py -- don't commit them.
 data/images/
-index/*.faiss
-index/metadata.json
+
+# NOTE: index/index.faiss and index/metadata.json are intentionally NOT
+# ignored -- they need to be committed so a deployment can load the index
+# without re-running build_index.py (which needs network access to
+# byrappasilk.in and takes significant time). Keep them tracked.
 
 .DS_Store
 venv/
