@@ -323,7 +323,7 @@ To deploy (e.g. Streamlit Community Cloud):
 Alternatively, build and run the provided `Dockerfile` anywhere that
 supports it — see the file for details on mounting a pre-built index.
 
-_(Fill in the live URL here once deployed.)_
+**Live app:** https://saree-visual-search.streamlit.app/
 
 ## 12. Project Structure
 

@@ -54,20 +54,38 @@ so you don't need to describe every result in detail -- a short summary is enoug
 
 
 def _build_chat_model():
+    provider = os.environ.get("LLM_PROVIDER", "gemini").strip().lower()
     api_key = os.environ.get("LLM_API_KEY")
-    model_name = os.environ.get("LLM_MODEL", "gemini-3.6-flash")
+    model_name = os.environ.get("LLM_MODEL")
 
     if not api_key:
         raise RuntimeError(
-            "LLM_API_KEY is not set. Copy .env.example to .env and set your Gemini "
-            "API key (see https://ai.google.dev/ for a free-tier key)."
+            "LLM_API_KEY is not set. Copy .env.example to .env and set your API key "
+            "(see https://ai.google.dev/ for Gemini, or https://console.groq.com/ for "
+            "Groq's free tier)."
         )
 
-    # Imported lazily so the rest of the app can be exercised/tested without
-    # the google genai SDK being a hard import-time dependency of every module.
-    from langchain_google_genai import ChatGoogleGenerativeAI
+    if provider == "groq":
+        from langchain_groq import ChatGroq
 
-    return ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key, temperature=0.2)
+        return ChatGroq(
+            model=model_name or "llama-3.1-8b-instant",
+            groq_api_key=api_key,
+            temperature=0.2,
+        )
+
+    if provider == "gemini":
+        from langchain_google_genai import ChatGoogleGenerativeAI
+
+        return ChatGoogleGenerativeAI(
+            model=model_name or "gemini-3.6-flash",
+            google_api_key=api_key,
+            temperature=0.2,
+        )
+
+    raise RuntimeError(
+        f"Unknown LLM_PROVIDER '{provider}'. Supported values: 'gemini', 'groq'."
+    )
 
 
 def build_agent():
